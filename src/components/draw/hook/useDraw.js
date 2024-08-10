@@ -1,30 +1,30 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
-export const useDraw = (width, color, drawInLayer, createLine) => {
-  const [lines, setLines] = useState([]);
+export const useDraw = (
+  width,
+  color,
+  drawInLayer,
+  createShape,
+  currentLayer
+) => {
   const isDrawing = useRef(false);
 
-  let lastLine = lines[lines.length - 1];
-  // console.log(lines);
+  const currentShapes = currentLayer ? currentLayer.shapes : null;
+  let lastLine = currentLayer ? currentShapes[currentShapes.length - 1] : null;
 
   const handleMouseDown = (e) => {
+    if (!currentLayer) {
+      return;
+    }
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
-    createLine({
+
+    createShape({
       width: width,
       color: color,
       points: [pos.x, pos.y],
-      id: lines.length + 1,
+      id: currentShapes.length + 1,
     });
-    setLines([
-      ...lines,
-      {
-        width: width,
-        color: color,
-        points: [pos.x, pos.y],
-        id: lines.length + 1,
-      },
-    ]);
   };
 
   const handleMouseMove = (e) => {
@@ -33,21 +33,21 @@ export const useDraw = (width, color, drawInLayer, createLine) => {
     }
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
-
     lastLine.points = lastLine.points.concat([point.x, point.y]);
-    lines.splice(lines.length - 1, 1, lastLine);
 
     drawInLayer(lastLine);
-    setLines([...lines]);
   };
 
   const handleMouseClick = (e) => {
+    if (!currentLayer) {
+      return;
+    }
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
 
     lastLine.points = lastLine.points.concat([point.x, point.y]);
-    lines.splice(lines.length - 1, 1, lastLine);
-    setLines([...lines]);
+
+    drawInLayer(lastLine);
   };
 
   const handleMouseUp = (e) => {
@@ -60,9 +60,6 @@ export const useDraw = (width, color, drawInLayer, createLine) => {
       handleMouseMove,
       handleMouseUp,
       handleMouseClick,
-      lines,
-      setLines,
     },
-    lines,
   };
 };
