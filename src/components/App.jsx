@@ -110,32 +110,36 @@ function App() {
               </Button>
             </Grid>
           </Grid>
-
-          {layers.layers.length
-            ? layers.layers.map((layer) => (
-                <Button
-                  key={layer.id}
-                  onClick={() => selectLayer(layer.id)}
-                  component="section"
-                  style={{
-                    backgroundColor:
-                      layers.selectedLayerId === layer.id ? "#007FFF" : "#fff",
-                    color:
-                      layers.selectedLayerId === layer.id ? "#fff" : "#000",
-                  }}
-                  sx={{
-                    p: 2,
-                    borderBottom: "2px solid #007FFF",
-                  }}
-                >
-                  {layer.name}
-                </Button>
-              ))
-            : null}
+          <Stack direction={"column-reverse"}>
+            {layers.layers.length
+              ? layers.layers.map((layer) => (
+                  <Button
+                    key={layer.id}
+                    onClick={() => selectLayer(layer.id)}
+                    component="section"
+                    style={{
+                      backgroundColor:
+                        layers.selectedLayerId === layer.id
+                          ? "#007FFF"
+                          : "#fff",
+                      color:
+                        layers.selectedLayerId === layer.id ? "#fff" : "#000",
+                    }}
+                    sx={{
+                      p: 2,
+                      borderBottom: "2px solid #007FFF",
+                    }}
+                  >
+                    {layer.name}
+                  </Button>
+                ))
+              : null}
+          </Stack>
         </Stack>
       </Grid>
       <Grid item xs={10.5}>
         <Stage
+          style={{ cursor: "crosshair" }}
           width={window.innerWidth}
           height={window.innerHeight}
           onMouseUp={actions.handleMouseUp}
